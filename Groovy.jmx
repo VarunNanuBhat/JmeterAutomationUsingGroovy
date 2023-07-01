@@ -435,11 +435,28 @@
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
-        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="BeanShell Sampler" enabled="true">
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="BeanShell Sampler (actual)" enabled="false">
           <stringProp name="BeanShellSampler.query">import org.apache.commons.io.FileUtils;
 
 try {
 	String content = FileUtils.readFileToString(new File(&quot;D:/Jmeter_Groovy/Groovy.xml&quot;));
+	vars.put(&quot;content&quot;, content);
+
+} catch(Throwable ex) {
+	log.info(&quot;File not found&quot;);
+	throw ex;
+}
+		</stringProp>
+          <stringProp name="BeanShellSampler.filename"></stringProp>
+          <stringProp name="BeanShellSampler.parameters"></stringProp>
+          <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
+        </BeanShellSampler>
+        <hashTree/>
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Dummmy" enabled="true">
+          <stringProp name="BeanShellSampler.query">import org.apache.commons.io.FileUtils;
+
+try {
+	String content = FileUtils.readFileToString(new File(&quot;D:/Jmeter_Groovy/dummy.xml&quot;));
 	vars.put(&quot;content&quot;, content);
 
 } catch(Throwable ex) {
@@ -470,6 +487,44 @@ log.info(root)</stringProp>
         </JSR223Sampler>
         <hashTree/>
         <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">// Import both DOMBuilder and DOMCategory
+import groovy.xml.DOMBuilder;
+import groovy.xml.dom.DOMCategory;
+
+// Convert the input XML file content to a string
+def input = new File(&apos;D:/Jmeter_Groovy/dummy.xml&apos;).text
+
+// Parse the input string using DOMBuilder
+def doc = DOMBuilder.parse(new StringReader(input))
+
+// Access the root element, which is meals
+def meals = doc.documentElement
+
+// Use DOMCategory to update values
+/*
+use(DOMCategory) {
+    // Get the breakfast category
+    def breakfast = meals.category[0]
+    // Update the breakfast category time
+    breakfast[&apos;@time&apos;] = &apos;7am&apos;
+}
+*/
+use(DOMCategory) {
+	for (i = 0; i&lt; 2; i++)
+ 	{	
+ 		def cat = meals.category[i]
+	     cat[&apos;@type&apos;] = &apos;bf&apos;
+ 	}
+}
+// Save the output to a file
+new File(&apos;D:/Jmeter_Groovy/out.xml&apos;).write(meals as String)</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Sampler" enabled="false">
           <stringProp name="scriptLanguage">groovy</stringProp>
           <stringProp name="parameters"></stringProp>
           <stringProp name="filename"></stringProp>
