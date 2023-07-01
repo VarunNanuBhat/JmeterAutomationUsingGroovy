@@ -514,10 +514,12 @@ use(DOMCategory) {
 }
 */
 use(DOMCategory) {
-	for (i = 0; i&lt; 2; i++)
+	// getting the count of nodes from root
+	def countOfNodes = meals.category.size()
+	for (i = 0; i&lt; countOfNodes; i++)
  	{	
  		def cat = meals.category[i]
-	     cat[&apos;@type&apos;] = &apos;bf&apos;
+	     cat[&apos;@type&apos;] = &apos;breakfast&apos;
  	}
 }
 // Save the output to a file
